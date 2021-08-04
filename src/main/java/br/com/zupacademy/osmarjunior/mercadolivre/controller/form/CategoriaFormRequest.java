@@ -22,7 +22,7 @@ public class CategoriaFormRequest {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public CategoriaFormRequest(@NotBlank String nome, Long categoriaMaeId) {
-        this.nome = nome;
+        this.nome = nome.trim().toUpperCase();
         this.categoriaMaeId = categoriaMaeId;
     }
 
