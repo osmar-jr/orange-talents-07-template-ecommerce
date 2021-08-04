@@ -26,7 +26,7 @@ public class UsuarioController {
     @Transactional
     public ResponseEntity<?> cadastrarUsuario(@RequestBody @Valid UsuarioFormRequest usuarioForm){
 
-        Usuario usuario = usuarioForm.converter();
+        Usuario usuario = usuarioForm.toUsuario();
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok().build();

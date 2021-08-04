@@ -4,10 +4,10 @@ import br.com.zupacademy.osmarjunior.mercadolivre.annotation.UniqueValue;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.SenhaLimpa;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 public class UsuarioFormRequest {
 
@@ -15,12 +15,12 @@ public class UsuarioFormRequest {
     @UniqueValue(classDomain = Usuario.class, attributeName = "login")
     private String login;
 
-    @NotBlank @Size(min = 6)
+    @NotBlank @Length(min = 6)
     private String senha;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public UsuarioFormRequest(@NotBlank @Email String login,
-                              @NotBlank @Size(min = 6) String senha) {
+                              @NotBlank @Length(min = 6) String senha) {
         this.login = login;
         this.senha = senha;
     }
@@ -29,7 +29,7 @@ public class UsuarioFormRequest {
     public UsuarioFormRequest() {
     }
 
-    public Usuario converter() {
+    public Usuario toUsuario() {
         return new Usuario(this.login, new SenhaLimpa(this.senha));
     }
 
