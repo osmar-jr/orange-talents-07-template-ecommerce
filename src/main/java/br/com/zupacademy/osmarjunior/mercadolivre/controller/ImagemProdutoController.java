@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,11 +45,11 @@ public class ImagemProdutoController {
         Produto produto = entityManager.find(Produto.class, id);
 
         if(produto == null){
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado.");
         }
 
         if(!produto.isOwner(usuario)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Operação não permitida para o produto informado.");
         }
 
         Set<String> urls = uploaderImage.send(imagensProdutoFormRequest.getImagens());
