@@ -4,38 +4,45 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
-public class Categoria {
+public class Caracteristica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank @Column(unique = true, nullable = false)
+    @NotBlank
+    @Column(unique = true)
     private String nome;
 
+    @NotBlank @Size(max = 1000)
+    private String descricao;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Categoria categoriaMae;
+    private Produto produto;
 
     @Deprecated
-    public Categoria() {
+    public Caracteristica() {
     }
 
-    public Categoria(@NotBlank String nome) {
+    public Caracteristica(@NotBlank String nome,
+                          @NotBlank @Size(max = 1000) String descricao,
+                          @NotNull @Valid Produto produto) {
         this.nome = nome;
-    }
+        this.descricao = descricao;
+        this.produto = produto;
 
-    public Categoria(@NotBlank String nome, @NotNull @Valid Categoria categoriaMae) {
-        this.nome = nome;
-        this.categoriaMae = categoriaMae;
     }
 
     @Override
     public String toString() {
-        return "Categoria{" +
+        return "Caracteristica{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
                 '}';
     }
 }
