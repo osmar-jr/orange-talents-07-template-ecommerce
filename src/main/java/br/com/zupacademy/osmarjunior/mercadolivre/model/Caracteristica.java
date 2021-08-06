@@ -21,6 +21,7 @@ public class Caracteristica {
     private String descricao;
 
     @NotNull
+    @Valid
     @ManyToOne(fetch = FetchType.LAZY)
     private Produto produto;
 

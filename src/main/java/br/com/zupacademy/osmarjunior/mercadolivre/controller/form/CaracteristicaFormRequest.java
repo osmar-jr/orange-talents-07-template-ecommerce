@@ -4,9 +4,8 @@ import br.com.zupacademy.osmarjunior.mercadolivre.annotation.UniqueValue;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Caracteristica;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Produto;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.util.Assert;
 
-import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,15 +31,7 @@ public class CaracteristicaFormRequest {
         this.descricao = descricao;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public Caracteristica toCaracteristica(Produto produto){
+    public Caracteristica toCaracteristica(@NotNull @Valid Produto produto){
         return new Caracteristica(this.nome, this.descricao, produto);
     }
 

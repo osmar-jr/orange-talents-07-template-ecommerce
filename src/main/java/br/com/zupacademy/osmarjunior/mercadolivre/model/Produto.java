@@ -1,6 +1,7 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.controller.form.CaracteristicaFormRequest;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Produto {
@@ -37,11 +39,19 @@ public class Produto {
     private LocalDateTime criadoEm;
 
     @NotNull
+    @Valid
     @ManyToOne
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
-    private Set<Caracteristica> caracteristicas;
+    @NotNull
+    @Valid
+    @ManyToOne
+    private Usuario dono;
+
+    @NotNull
+    @Valid
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
+    private Set<Caracteristica> caracteristicas = new HashSet<>();
 
     @Deprecated
     public Produto() {
@@ -51,18 +61,23 @@ public class Produto {
                    @NotBlank @Size(max = 1000) String descricao,
                    @NotNull @PositiveOrZero Integer quantidade,
                    @NotNull @PositiveOrZero BigDecimal valor,
-                   @NotNull @Valid Categoria categoria) {
+                   @NotNull @Valid Usuario usuario,
+                   @NotNull @Valid Categoria categoria,
+                   @NotNull @Valid Set<CaracteristicaFormRequest> caracteristicaFormRequests) {
+
+        Assert.isTrue(caracteristicaFormRequests.size() >= 3,
+                "Produto deve ter no mínimo três características.");
+
         this.nome = nome;
         this.descricao = descricao;
         this.quantidade = quantidade;
         this.valor = valor;
         this.categoria = categoria;
+        this.dono = usuario;
         this.criadoEm = LocalDateTime.now();
-        this.caracteristicas = new HashSet<>();
-    }
-
-    public void addCaracteristica(@Valid Caracteristica caracteristica){
-        this.caracteristicas.add(caracteristica);
+        this.caracteristicas.addAll(caracteristicaFormRequests.stream()
+                .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(this))
+                .collect(Collectors.toSet()));;
     }
 
     @Override
@@ -78,5 +93,4 @@ public class Produto {
                 ", caracteristicas=" + caracteristicas +
                 '}';
     }
-
 }

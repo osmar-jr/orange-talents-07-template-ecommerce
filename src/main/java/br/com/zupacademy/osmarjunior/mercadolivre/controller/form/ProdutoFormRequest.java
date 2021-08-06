@@ -1,9 +1,10 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.controller.form;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.annotation.ExistsId;
-import br.com.zupacademy.osmarjunior.mercadolivre.model.Caracteristica;
+import br.com.zupacademy.osmarjunior.mercadolivre.annotation.UniqueValue;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Categoria;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Produto;
+import br.com.zupacademy.osmarjunior.mercadolivre.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.springframework.util.Assert;
 
@@ -13,11 +14,11 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ProdutoFormRequest {
 
     @NotBlank
+    @UniqueValue(classDomain = Produto.class, attributeName = "nome")
     private String nome;
 
     @NotBlank @Size(max = 1000)
@@ -57,24 +58,13 @@ public class ProdutoFormRequest {
         this.caracteristicas = caracteristicas;
     }
 
-    public Produto toProduto(EntityManager entityManager) {
+    public Produto toProduto(EntityManager entityManager, @NotNull @Valid Usuario usuario) {
         Categoria categoria = entityManager.find(Categoria.class, this.categoriaId);
         Assert.notNull(categoria, "Categoria informada não existe.");
 
-        Produto produto = new Produto(this.nome, this.descricao, this.quantidade, this.valor, categoria);
-        Set<Caracteristica> caracteristicasAssociadas = gerarCaracteristicas(produto);
-
-        caracteristicasAssociadas.forEach(produto::addCaracteristica);
-        return produto;
-    }
-
-    private Set<Caracteristica> gerarCaracteristicas(Produto produto) {
-        Assert.notNull(produto, "Erro, produto inválido para criar suas características.");
-
-        return this.caracteristicas
-                .stream()
-                .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(produto))
-                .collect(Collectors.toSet());
+        return new Produto(this.nome, this.descricao,
+                this.quantidade, this.valor,
+                usuario, categoria, this.caracteristicas);
     }
 
 }
