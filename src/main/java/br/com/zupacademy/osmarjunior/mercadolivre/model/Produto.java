@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,6 +52,10 @@ public class Produto {
     @OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
     private Set<Caracteristica> caracteristicas = new HashSet<>();
 
+    @Valid
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
+    private Set<ImagemProduto> imagensProduto;
+
     @Deprecated
     public Produto() {
     }
@@ -75,7 +78,9 @@ public class Produto {
         this.categoria = categoria;
         this.dono = usuario;
         this.criadoEm = LocalDateTime.now();
-        this.caracteristicas.addAll(caracteristicaFormRequests.stream()
+        this.imagensProduto = new HashSet<>();
+        this.caracteristicas
+                .addAll(caracteristicaFormRequests.stream()
                 .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(this))
                 .collect(Collectors.toSet()));;
     }
@@ -92,5 +97,19 @@ public class Produto {
                 ", categoria=" + categoria +
                 ", caracteristicas=" + caracteristicas +
                 '}';
+    }
+
+    public boolean isOwner(Usuario usuario) {
+        return this.dono.equals(usuario);
+    }
+
+    public void inserirImagens(Set<String> urls) {
+        Assert.notEmpty(urls, "Lista de imagens não pode ser vazia.");
+
+        Set<ImagemProduto> imagens = urls.stream()
+                .map(url -> new ImagemProduto(url, this))
+                .collect(Collectors.toSet());
+
+        this.imagensProduto.addAll(imagens);
     }
 }

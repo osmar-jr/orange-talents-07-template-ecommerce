@@ -6,6 +6,7 @@ import br.com.zupacademy.osmarjunior.mercadolivre.model.Categoria;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Produto;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Usuario;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
