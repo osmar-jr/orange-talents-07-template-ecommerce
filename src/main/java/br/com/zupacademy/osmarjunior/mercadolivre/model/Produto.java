@@ -85,6 +85,10 @@ public class Produto {
                 .collect(Collectors.toSet()));;
     }
 
+    public Usuario getDono() {
+        return dono;
+    }
+
     @Override
     public String toString() {
         return "Produto{" +

@@ -4,7 +4,7 @@ import br.com.zupacademy.osmarjunior.mercadolivre.controller.form.PerguntaFormRe
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Pergunta;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Produto;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Usuario;
-import br.com.zupacademy.osmarjunior.mercadolivre.utils.Sender;
+import br.com.zupacademy.osmarjunior.mercadolivre.service.Emails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class PerguntaController {
     private EntityManager entityManager;
 
     @Autowired
-    private Sender emailSender;
+    private Emails emailSender;
 
     @PostMapping
     @Transactional
@@ -45,7 +45,8 @@ public class PerguntaController {
 
         Pergunta pergunta = perguntaFormRequest.toPergunta(autor, produto);
         entityManager.persist(pergunta);
-        emailSender.sendEmail(pergunta);
+
+        emailSender.novaPergunta(pergunta);
 
         return ResponseEntity.ok().body(pergunta.toString());
     }

@@ -42,5 +42,13 @@ public class Pergunta{
                 ", produto=" + produto +
                 '}';
     }
+
+    public String getEmailAutorPergunta() {
+        return this.autor.getUsername();
+    }
+
+    public String getEmailVendedorProduto() {
+        return this.produto.getDono().getUsername();
+    }
 }
 
