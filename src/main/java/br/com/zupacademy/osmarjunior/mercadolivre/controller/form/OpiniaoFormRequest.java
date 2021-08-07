@@ -32,13 +32,13 @@ public class OpiniaoFormRequest {
         this.nota = nota;
     }
 
-    public Opiniao toOpiniao(@NotNull @Valid Usuario usuario,
+    public Opiniao toOpiniao(@NotNull @Valid Usuario consumidor,
                              @NotNull @Valid Produto produto) {
 
         return new Opiniao(this.titulo,
                 this.descricao,
                 this.nota,
-                usuario,
+                consumidor,
                 produto);
     }
 }

@@ -28,7 +28,7 @@ public class Opiniao {
 
     @NotNull @Valid
     @ManyToOne(fetch = FetchType.LAZY)
-    private Usuario usuario;
+    private Usuario consumidor;
 
     @NotNull @Valid
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,12 +41,12 @@ public class Opiniao {
     public Opiniao(@NotBlank String titulo,
                    @NotBlank @Length(max = 500) String descricao,
                    @NotNull @Min(1) @Max(5) Integer nota,
-                   @NotNull @Valid Usuario usuario,
+                   @NotNull @Valid Usuario consumidor,
                    @NotNull @Valid Produto produto) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.nota = nota;
-        this.usuario = usuario;
+        this.consumidor = consumidor;
         this.produto = produto;
     }
 

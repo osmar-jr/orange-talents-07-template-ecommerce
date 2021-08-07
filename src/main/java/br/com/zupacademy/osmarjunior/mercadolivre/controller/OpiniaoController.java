@@ -26,13 +26,13 @@ public class OpiniaoController {
     @Transactional
     public ResponseEntity<?> adicionarOpiniao(@PathVariable("id") Long id,
                                               @RequestBody @Valid OpiniaoFormRequest opiniaoFormRequest,
-                                              @AuthenticationPrincipal Usuario usuario){
+                                              @AuthenticationPrincipal Usuario consumidor){
         Produto produto = entityManager.find(Produto.class, id);
         if(produto == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto informado não encontrado.");
         }
 
-        Opiniao opiniao = opiniaoFormRequest.toOpiniao(usuario, produto);
+        Opiniao opiniao = opiniaoFormRequest.toOpiniao(consumidor, produto);
         entityManager.persist(opiniao);
         return ResponseEntity.ok().body(opiniao.toString());
     }
