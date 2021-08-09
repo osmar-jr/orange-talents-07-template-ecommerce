@@ -18,16 +18,9 @@ public class ImagemProduto {
     private String url;
 
     @NotNull @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Produto produto;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @Deprecated
     public ImagemProduto() {
@@ -37,6 +30,22 @@ public class ImagemProduto {
 
         this.url = url;
         this.produto = produto;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public String toString() {
+        return "ImagemProduto{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                '}';
     }
 
     @Override

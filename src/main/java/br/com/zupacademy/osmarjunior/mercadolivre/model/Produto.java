@@ -1,6 +1,7 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.controller.form.CaracteristicaFormRequest;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -9,8 +10,7 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -54,7 +54,17 @@ public class Produto {
 
     @Valid
     @OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
-    private Set<ImagemProduto> imagensProduto;
+    private Set<ImagemProduto> imagensProduto = new HashSet<>();
+
+    @Valid
+    @OneToMany(mappedBy = "produto")
+    private List<Pergunta> perguntas = new ArrayList<>();
+
+    @Valid
+    @OneToMany(mappedBy = "produto")
+    private List<Opiniao> opinioes = new ArrayList<>();
+
+
 
     @Deprecated
     public Produto() {
@@ -78,11 +88,38 @@ public class Produto {
         this.categoria = categoria;
         this.dono = usuario;
         this.criadoEm = LocalDateTime.now();
-        this.imagensProduto = new HashSet<>();
         this.caracteristicas
                 .addAll(caracteristicaFormRequests.stream()
                 .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(this))
                 .collect(Collectors.toSet()));;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public Set<Caracteristica> getCaracteristicas() {
+        return Collections.unmodifiableSet(caracteristicas);
+    }
+
+    public Set<ImagemProduto> getImagensProduto() {
+        return Collections.unmodifiableSet(imagensProduto);
+    }
+
+    public List<Pergunta> getPerguntas() {
+        return Collections.unmodifiableList(perguntas);
+    }
+
+    public List<Opiniao> getOpinioes() {
+        return Collections.unmodifiableList(opinioes);
     }
 
     public Usuario getDono() {

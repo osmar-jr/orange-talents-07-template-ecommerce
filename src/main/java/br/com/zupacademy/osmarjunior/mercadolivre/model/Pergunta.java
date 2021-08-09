@@ -16,11 +16,11 @@ public class Pergunta{
     private String titulo;
 
     @NotNull @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Usuario autor;
 
     @NotNull @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Produto produto;
 
     @Deprecated
@@ -38,9 +38,18 @@ public class Pergunta{
     @Override
     public String toString() {
         return "Pergunta{" +
-                "titulo='" + titulo + '\'' +
-                ", produto=" + produto +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", autor=" + autor +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
     }
 
     public String getEmailAutorPergunta() {

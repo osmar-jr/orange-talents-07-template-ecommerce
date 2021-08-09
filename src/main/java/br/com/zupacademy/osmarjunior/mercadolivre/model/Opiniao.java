@@ -27,11 +27,11 @@ public class Opiniao {
     private Integer nota;
 
     @NotNull @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Usuario consumidor;
 
     @NotNull @Valid
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Produto produto;
 
     @Deprecated
@@ -48,6 +48,18 @@ public class Opiniao {
         this.nota = nota;
         this.consumidor = consumidor;
         this.produto = produto;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public Integer getNota() {
+        return nota;
     }
 
     @Override
