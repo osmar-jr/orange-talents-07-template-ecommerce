@@ -65,11 +65,11 @@ public class Compra {
             return "paypal.com?buyerId="
                     + this.codigoDaCompra
                     +"&redirectUrl="
-                    + "http://localhost:8080/compras/";
+                    + "http://localhost:8080/compras/retorno-paypal/";
         } else {
             return "pagseguro.com?returnId="
                     + this.codigoDaCompra
-                    +"&redirectUrl=http://localhost:8080/compras/";
+                    +"&redirectUrl=http://localhost:8080/compras/retorno-pagseguro/";
         }
     }
 

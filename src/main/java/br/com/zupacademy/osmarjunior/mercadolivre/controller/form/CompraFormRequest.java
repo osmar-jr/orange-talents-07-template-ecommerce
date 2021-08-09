@@ -3,14 +3,10 @@ package br.com.zupacademy.osmarjunior.mercadolivre.controller.form;
 import br.com.zupacademy.osmarjunior.mercadolivre.annotation.ExistsId;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Produto;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.GatewayPagamento;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
