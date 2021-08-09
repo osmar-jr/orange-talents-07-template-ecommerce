@@ -4,9 +4,10 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
-public class Pergunta{
+public class Pergunta implements Comparable<Pergunta>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -44,10 +45,6 @@ public class Pergunta{
                 '}';
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getTitulo() {
         return titulo;
     }
@@ -58,6 +55,24 @@ public class Pergunta{
 
     public String getEmailVendedorProduto() {
         return this.produto.getDono().getUsername();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pergunta pergunta = (Pergunta) o;
+        return Objects.equals(titulo, pergunta.titulo) && Objects.equals(autor, pergunta.autor) && Objects.equals(produto, pergunta.produto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(titulo, autor, produto);
+    }
+
+    @Override
+    public int compareTo(Pergunta o) {
+        return this.titulo.compareTo(o.titulo);
     }
 }
 

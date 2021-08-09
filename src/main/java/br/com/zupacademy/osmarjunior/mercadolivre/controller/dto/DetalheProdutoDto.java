@@ -1,38 +1,40 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.controller.dto;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.model.*;
+import br.com.zupacademy.osmarjunior.mercadolivre.utils.Opinioes;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 public class DetalheProdutoDto {
 
     private String nome;
     private String descricao;
     private BigDecimal valor;
-    private Double mediaDeNota;
+    private Double mediaNotas;
     private Integer quantidadeDeNotas;
-    private Set<Caracteristica> caracteristicas = new HashSet<>();
-    private Set<ImagemProduto> linksImagens = new HashSet<>();
-    private List<Pergunta> perguntas = new ArrayList<>();
-    private List<Opiniao> opinioes = new ArrayList<>();
+    private Set<DetalheProdutoCaracteristicaDto> caracteristicas;
+    private Set<String> linksImagens;
+    private SortedSet<String> perguntas;
+    private Set<Map<String, String>> opinioes;
 
     public DetalheProdutoDto(Produto produto) {
         this.nome = produto.getNome();
         this.descricao = produto.getDescricao();
         this.valor = produto.getValor();
-        this.quantidadeDeNotas = produto.getOpinioes().size();
-        this.caracteristicas = produto.getCaracteristicas();
-        this.linksImagens = produto.getImagensProduto();
-        this.perguntas = produto.getPerguntas();
-        this.opinioes = produto.getOpinioes();
-        this.mediaDeNota = produto.getOpinioes()
-                .stream()
-                .mapToDouble(Opiniao::getNota)
-                .average().orElse(0.0);
+        this.caracteristicas = produto.mapeiaCaracteristicas(DetalheProdutoCaracteristicaDto::new);
+        this.linksImagens = produto.mapeiaLinksImagens(ImagemProduto::getUrl);
+        this.perguntas = produto.mapeiaPerguntas(Pergunta::getTitulo);
+
+        Opinioes opinioes = produto.getOpinioes();
+        this.opinioes = opinioes.mapeiaOpinioes(opiniao -> {
+            return Map.of("titulo", opiniao.getTitulo(), "descricao", opiniao.getDescricao());
+        });
+
+        this.mediaNotas = opinioes.media();
+        this.quantidadeDeNotas = opinioes.getTotalDeNotas();
     }
 
     public String getNome() {
@@ -47,27 +49,27 @@ public class DetalheProdutoDto {
         return valor;
     }
 
-    public Double getMediaDeNota() {
-        return mediaDeNota;
+    public Double getMediaNotas() {
+        return mediaNotas;
     }
 
     public Integer getQuantidadeDeNotas() {
         return quantidadeDeNotas;
     }
 
-    public Set<Caracteristica> getCaracteristicas() {
+    public Set<DetalheProdutoCaracteristicaDto> getCaracteristicas() {
         return caracteristicas;
     }
 
-    public Set<ImagemProduto> getLinksImagens() {
+    public Set<String> getLinksImagens() {
         return linksImagens;
     }
 
-    public List<Pergunta> getPerguntas() {
+    public SortedSet<String> getPerguntas() {
         return perguntas;
     }
 
-    public List<Opiniao> getOpinioes() {
+    public Set<Map<String, String>> getOpinioes() {
         return opinioes;
     }
 }

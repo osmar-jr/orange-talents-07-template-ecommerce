@@ -32,10 +32,6 @@ public class ImagemProduto {
         this.produto = produto;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getUrl() {
         return url;
     }

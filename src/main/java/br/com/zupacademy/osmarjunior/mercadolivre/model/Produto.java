@@ -1,7 +1,7 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.controller.form.CaracteristicaFormRequest;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import br.com.zupacademy.osmarjunior.mercadolivre.utils.Opinioes;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Entity
@@ -23,15 +24,18 @@ public class Produto {
     @NotBlank
     private String nome;
 
-    @NotBlank @Size(max = 1000)
+    @NotBlank
+    @Size(max = 1000)
     @Column(columnDefinition = "TEXT")
     @Size(max = 1000)
     private String descricao;
 
-    @NotNull @PositiveOrZero
+    @NotNull
+    @PositiveOrZero
     private Integer quantidade;
 
-    @NotNull @PositiveOrZero
+    @NotNull
+    @PositiveOrZero
     private BigDecimal valor;
 
     @NotNull
@@ -58,13 +62,12 @@ public class Produto {
 
     @Valid
     @OneToMany(mappedBy = "produto")
-    private List<Pergunta> perguntas = new ArrayList<>();
+    @OrderBy("titulo asc")
+    private SortedSet<Pergunta> perguntas = new TreeSet<>();
 
     @Valid
     @OneToMany(mappedBy = "produto")
-    private List<Opiniao> opinioes = new ArrayList<>();
-
-
+    private Set<Opiniao> opinioes = new HashSet<>();
 
     @Deprecated
     public Produto() {
@@ -90,8 +93,9 @@ public class Produto {
         this.criadoEm = LocalDateTime.now();
         this.caracteristicas
                 .addAll(caracteristicaFormRequests.stream()
-                .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(this))
-                .collect(Collectors.toSet()));;
+                        .map(caracteristicaFormRequest -> caracteristicaFormRequest.toCaracteristica(this))
+                        .collect(Collectors.toSet()));
+        ;
     }
 
     public String getNome() {
@@ -104,22 +108,6 @@ public class Produto {
 
     public BigDecimal getValor() {
         return valor;
-    }
-
-    public Set<Caracteristica> getCaracteristicas() {
-        return Collections.unmodifiableSet(caracteristicas);
-    }
-
-    public Set<ImagemProduto> getImagensProduto() {
-        return Collections.unmodifiableSet(imagensProduto);
-    }
-
-    public List<Pergunta> getPerguntas() {
-        return Collections.unmodifiableList(perguntas);
-    }
-
-    public List<Opiniao> getOpinioes() {
-        return Collections.unmodifiableList(opinioes);
     }
 
     public Usuario getDono() {
@@ -152,5 +140,25 @@ public class Produto {
                 .collect(Collectors.toSet());
 
         this.imagensProduto.addAll(imagens);
+    }
+
+    public <T> Set<T> mapeiaCaracteristicas(Function<Caracteristica, T> functionMap) {
+
+        return this.caracteristicas.stream().map(functionMap).collect(Collectors.toSet());
+    }
+
+    public <T> Set<T> mapeiaLinksImagens(Function<ImagemProduto, T> functionMap) {
+
+        return this.imagensProduto.stream().map(functionMap).collect(Collectors.toSet());
+    }
+
+    public <T> SortedSet<T> mapeiaPerguntas(Function<Pergunta, T> functionMap) {
+
+        return this.perguntas.stream().map(functionMap).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public Opinioes getOpinioes() {
+
+        return new Opinioes(this.opinioes);
     }
 }
