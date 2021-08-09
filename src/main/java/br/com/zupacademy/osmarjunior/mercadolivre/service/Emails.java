@@ -1,5 +1,6 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.service;
 
+import br.com.zupacademy.osmarjunior.mercadolivre.model.Compra;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Pergunta;
 import br.com.zupacademy.osmarjunior.mercadolivre.utils.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,12 @@ public class Emails {
                 "Nova Pergunta Sobre...",
                 pergunta.getEmailAutorPergunta(),
                 pergunta.getEmailVendedorProduto());
+    }
+
+    public void novaCompra(@NotNull @Valid Compra compra) {
+        sender.sendEmail("<html>...</htm>",
+                "Novo Pedido de Compra",
+                compra.getEmailComprador(),
+                compra.getEmailVendendor());
     }
 }

@@ -161,4 +161,15 @@ public class Produto {
 
         return new Opinioes(this.opinioes);
     }
+
+    public boolean abaterEstoque(@Positive Integer quantidade) {
+        Assert.isTrue(quantidade > 0, "Quantidade não pode ser menor ou igual a zero.");
+
+        if(quantidade <= this.quantidade){
+            this.quantidade -= quantidade;
+            return true;
+        }
+
+        return false;
+    }
 }
