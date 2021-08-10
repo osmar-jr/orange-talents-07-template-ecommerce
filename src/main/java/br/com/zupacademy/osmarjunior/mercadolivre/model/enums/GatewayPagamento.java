@@ -30,10 +30,10 @@ public enum GatewayPagamento {
         Map<String, String> mapVariables = new HashMap<>();
 
         mapVariables.put("urlPagamento", this.urlPagamento);
-        mapVariables.put("compraId", compra.getId().toString());
         mapVariables.put("codigoCompra", compra.getCodigoDaCompra());
         mapVariables.put("urlRetorno", this.urlPrefixoRetorno);
         mapVariables.put("sufixoRetorno", this.sufixoRedirectUrl);
+        mapVariables.put("compraId", compra.getId().toString());
 
         String urlDePagamento = UriComponentsBuilder
                 .newInstance()
@@ -41,7 +41,7 @@ public enum GatewayPagamento {
                 .host("{urlPagamento}")
                 .queryParam("buyerId={compraId}")
                 .queryParam("serialId={codigoCompra}")
-                .queryParam("redirectUrl={urlRetorno}/{sufixoRetorno}")
+                .queryParam("redirectUrl={urlRetorno}/{sufixoRetorno}/{compraId}")
                 .buildAndExpand(mapVariables).toString();
         mapVariables.clear();
 

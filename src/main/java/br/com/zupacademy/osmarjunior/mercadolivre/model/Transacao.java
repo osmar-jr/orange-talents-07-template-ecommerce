@@ -1,6 +1,6 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
-import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusCompra;
+import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusTransacao;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -20,11 +20,11 @@ public class Transacao {
 
     @NotBlank
     @Column(columnDefinition = "TEXT")
-    private String pagamentoId;
+    private String transacaoIdGateway;
 
     @NotNull @Valid
     @Enumerated
-    private StatusCompra statusCompra;
+    private StatusTransacao statusTransacao;
 
     @NotNull @Valid
     @ManyToOne
@@ -41,26 +41,24 @@ public class Transacao {
     public Transacao() {
     }
 
-    public Transacao(@NotBlank String pagamentoId,
-                     @NotNull @Valid StatusCompra statusCompra,
+    public Transacao(@NotBlank String transacaoIdGateway,
+                     @NotNull @Valid StatusTransacao statusTransacao,
                      @NotNull @Valid Compra compra,
                      @NotNull @Valid Usuario comprador) {
 
-        this.pagamentoId = pagamentoId;
-        this.statusCompra = statusCompra;
+        this.transacaoIdGateway = transacaoIdGateway;
+        this.statusTransacao = statusTransacao;
         this.compra = compra;
         this.comprador = comprador;
         this.realizadoEm = LocalDateTime.now();
-        this.compra.adicionarTransacao(this);
     }
 
     @Override
     public String toString() {
         return "Transacao{" +
                 "id=" + id +
-                ", pagamentoId='" + pagamentoId + '\'' +
-                ", statusCompra=" + statusCompra +
-                ", compra=" + compra +
+                ", pagamentoId='" + transacaoIdGateway + '\'' +
+                ", statusCompra=" + statusTransacao +
                 ", realizadoEm=" + realizadoEm.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) +
                 '}';
     }
@@ -70,15 +68,15 @@ public class Transacao {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transacao transacao = (Transacao) o;
-        return Objects.equals(id, transacao.id) && Objects.equals(pagamentoId, transacao.pagamentoId) && statusCompra == transacao.statusCompra && Objects.equals(compra, transacao.compra) && Objects.equals(comprador, transacao.comprador);
+        return Objects.equals(id, transacao.id) && Objects.equals(transacaoIdGateway, transacao.transacaoIdGateway) && statusTransacao == transacao.statusTransacao && Objects.equals(compra, transacao.compra) && Objects.equals(comprador, transacao.comprador);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pagamentoId, statusCompra, compra, comprador);
+        return Objects.hash(id, transacaoIdGateway, statusTransacao, compra, comprador);
     }
 
-    public StatusCompra getStatusCompra() {
-        return this.statusCompra;
+    public boolean isConcluidaComSucesso(){
+        return this.statusTransacao.equals(StatusTransacao.sucesso);
     }
 }

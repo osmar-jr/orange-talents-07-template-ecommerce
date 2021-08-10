@@ -1,8 +1,9 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
+import br.com.zupacademy.osmarjunior.mercadolivre.controller.form.TransacaorRetornoFormRequest;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.GatewayPagamento;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusCompra;
-import com.zaxxer.hikari.util.ConcurrentBag;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 public class Compra {
@@ -45,7 +47,7 @@ public class Compra {
     @Enumerated(EnumType.STRING)
     private StatusCompra statusCompra;
 
-    @OneToMany(mappedBy = "compra")
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.MERGE)
     private Set<Transacao> transacoes = new HashSet<>();
 
     @Deprecated
@@ -74,14 +76,12 @@ public class Compra {
         return "Compra{" +
                 "id=" + id +
                 ", codigoDaCompra='" + codigoDaCompra + '\'' +
+                ", produto=" + produto +
                 ", quantidade=" + quantidade +
                 ", gatewayPagamento=" + gatewayPagamento +
                 ", statusCompra=" + statusCompra +
+                ", transacoes=" + transacoes +
                 '}';
-    }
-
-    public String getEmailVendendor() {
-        return this.produto.getDono().getUsername();
     }
 
     public String getCodigoDaCompra() {
@@ -92,11 +92,43 @@ public class Compra {
         return this.id;
     }
 
-    public String getEmailComprador() {
-        return this.comprador.getUsername();
+    public void adicionarTransacao(@Valid TransacaorRetornoFormRequest form) {
+        Transacao transacao = form.toTransacao(this, this.comprador);
+
+        Assert.isTrue(!this.transacoes.contains(transacao),
+                "Já existe uma transção igual a essa.");
+
+        Assert.isTrue(getTransacoesConcluidasComSucesso().isEmpty(), "Já existe uma transação realizada com sucesso para esta compra.");
+        this.transacoes.add(transacao);
     }
 
-    public void adicionarTransacao(Transacao transacao) {
-        this.transacoes.add(transacao);
+    private Set<Transacao> getTransacoesConcluidasComSucesso() {
+        Set<Transacao> transacoesConcluidasComSucesso = this.transacoes
+                .stream()
+                .filter(Transacao::isConcluidaComSucesso)
+                .collect(Collectors.toSet());
+
+        Assert.isTrue(transacoesConcluidasComSucesso.size() <= 1,
+                "FATAL ERROR: Existem mais de uma transação finalizadas com sucesso para esta compra.");
+
+        return transacoesConcluidasComSucesso;
+    }
+
+    public boolean processadaComSucesso() {
+        return !getTransacoesConcluidasComSucesso().isEmpty();
+    }
+
+    public Usuario getComprador() {
+        return this.comprador;
+    }
+
+    public Usuario getVendedor() {
+        return this.produto.getDono();
+    }
+
+    public void atualizaStatusCompra() {
+        Assert.isTrue(processadaComSucesso(), "Não foi possível atualizar o status, compra não foi processada com sucesso.");
+        Assert.isTrue(!this.statusCompra.equals(StatusCompra.FINALIZADA), "Erro, a compra já foi finalizada.");
+        this.statusCompra = StatusCompra.FINALIZADA;
     }
 }

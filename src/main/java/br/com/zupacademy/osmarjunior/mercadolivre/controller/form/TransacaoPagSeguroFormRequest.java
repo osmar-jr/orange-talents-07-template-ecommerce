@@ -1,10 +1,9 @@
 package br.com.zupacademy.osmarjunior.mercadolivre.controller.form;
 
-import br.com.zupacademy.osmarjunior.mercadolivre.annotation.ExistsId;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Compra;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Transacao;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.Usuario;
-import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusCompra;
+import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusPagSeguroTransacao;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,47 +11,24 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class TransacaoPagSeguroFormRequest {
-
-    @NotNull @ExistsId(classDomain = Compra.class, attributeName = "id")
-    private Long compraId;
+public class TransacaoPagSeguroFormRequest implements TransacaorRetornoFormRequest {
 
     @NotBlank
-    private String pagamentoId;
+    private String transacaoId;
 
     @NotNull
     @Valid
     @Enumerated(EnumType.STRING)
-    private StatusCompra statusCompra;
+    private StatusPagSeguroTransacao statusCompra;
 
-    public TransacaoPagSeguroFormRequest(@NotNull Long compraId,
-                                         @NotBlank String pagamentoId,
-                                         @NotNull @Valid StatusCompra statusCompra) {
-        this.compraId = compraId;
-        this.pagamentoId = pagamentoId;
+    public TransacaoPagSeguroFormRequest(@NotBlank String transacaoId,
+                                         @NotNull @Valid StatusPagSeguroTransacao statusCompra) {
+        this.transacaoId = transacaoId;
         this.statusCompra = statusCompra;
     }
 
-    public Long getCompraId() {
-        return compraId;
-    }
+    public Transacao toTransacao(@NotNull @Valid Compra compra, @NotNull @Valid Usuario comprador) {
 
-    public StatusCompra getStatusCompra() {
-        return statusCompra;
-    }
-
-    @Override
-    public String toString() {
-        return "TransacaoPagSeguroFormRequest{" +
-                "compraId=" + compraId +
-                ", pagamentoId='" + pagamentoId + '\'' +
-                ", statusPagamento=" + statusCompra +
-                '}';
-    }
-
-    public Transacao toTransacao(@NotNull @Valid Usuario comprador,
-                                 @NotNull @Valid Compra compra) {
-
-        return new Transacao(this.pagamentoId, this.statusCompra, compra, comprador);
+        return new Transacao(this.transacaoId, this.statusCompra.normalize(), compra, comprador);
     }
 }

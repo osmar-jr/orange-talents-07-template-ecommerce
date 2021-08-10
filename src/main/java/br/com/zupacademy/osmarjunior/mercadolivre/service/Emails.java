@@ -27,20 +27,20 @@ public class Emails {
         sender.sendEmail("<html>...</htm>",
                 "Novo Pedido de Compra",
                 "compras@mercadolivre.com.br",
-                compra.getEmailVendendor());
+                compra.getVendedor().getUsername());
     }
 
-    public void notificarFalhaAoProcessarCompra(Compra compra) {
+    public void falhaAoProcessarCompra(Compra compra) {
         sender.sendEmail("<html>..." + compra.gerarLinkDePagamento() + "...</html>",
                 "Falha ao Processar a Compra",
                 "compras@mercardolivre.com.br",
-                compra.getEmailComprador());
+                compra.getComprador().getUsername());
     }
 
-    public void enviarNotaFiscalCompra(Compra compra, Usuario comprador, String notaFiscal) {
-        sender.sendEmail("<html>..."+ notaFiscal + " Codigo: " + compra.getCodigoDaCompra() +"...</html>",
-                "Nota Fiscal Gerada",
-                "compras@mercadolivre.com.br",
-                comprador.getUsername());
+    public void compraProcessadaComSucesso(Compra compra) {
+        sender.sendEmail("<html>..." + compra.toString() + "...</html>",
+                "Compra Realizada com Sucesso.",
+                "compras@mercardolivre.com.br",
+                compra.getComprador().getUsername());
     }
 }
