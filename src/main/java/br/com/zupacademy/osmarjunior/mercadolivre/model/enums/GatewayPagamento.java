@@ -18,7 +18,7 @@ public enum GatewayPagamento {
     private String sufixoRedirectUrl;
 
     @NotBlank
-    private String urlPrefixoRetorno = "http://localhost:8080/pagamentos";
+    private String urlPrefixoRetorno = "http://localhost:8080/transacoes";
 
     GatewayPagamento(@NotBlank String url, @NotBlank String sufixoRedirectUrl) {
         this.urlPagamento = url;
