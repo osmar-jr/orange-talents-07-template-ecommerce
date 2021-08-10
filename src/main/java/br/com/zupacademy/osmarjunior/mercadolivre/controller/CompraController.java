@@ -40,6 +40,7 @@ public class CompraController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "Produto informado não existe no sistema");
         }
+
         Integer quantidade = compraFormRequest.getQuantidade();
         if(!produto.abaterEstoque(quantidade)){
             return ResponseEntity
@@ -47,13 +48,16 @@ public class CompraController {
                     .body("Quantidade solicitada não está disponível para este produto.");
         }
 
-        Compra compra = new Compra(produto, comprador, quantidade, compraFormRequest.getFormaPagamento());
+        Compra compra = new Compra(produto,
+                comprador,
+                quantidade,
+                compraFormRequest.getFormaPagamento());
         entityManager.persist(compra);
 
         emails.novaCompra(compra);
 
-        String linkDePagamento = compra.gerarLinkDePagamento();
+        String uriDePagamento = compra.gerarLinkDePagamento();
 
-        return ResponseEntity.ok(linkDePagamento);
+        return ResponseEntity.ok(uriDePagamento);
     }
 }

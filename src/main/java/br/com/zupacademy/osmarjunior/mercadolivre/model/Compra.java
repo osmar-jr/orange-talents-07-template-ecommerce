@@ -58,19 +58,9 @@ public class Compra {
         this.codigoDaCompra = UUID.randomUUID().toString();
     }
 
-
     public String gerarLinkDePagamento() {
-        if (this.gatewayPagamento.equals(GatewayPagamento.paypal)){
 
-            return "paypal.com?buyerId="
-                    + this.codigoDaCompra
-                    +"&redirectUrl="
-                    + "http://localhost:8080/compras/retorno-paypal/";
-        } else {
-            return "pagseguro.com?returnId="
-                    + this.codigoDaCompra
-                    +"&redirectUrl=http://localhost:8080/compras/retorno-pagseguro/";
-        }
+        return this.gatewayPagamento.gerarLinkPagamento(this.codigoDaCompra);
     }
 
     @Override
@@ -82,10 +72,6 @@ public class Compra {
                 ", gatewayPagamento=" + gatewayPagamento +
                 ", statusCompra=" + statusCompra +
                 '}';
-    }
-
-    public String getEmailComprador() {
-        return this.comprador.getUsername();
     }
 
     public String getEmailVendendor() {

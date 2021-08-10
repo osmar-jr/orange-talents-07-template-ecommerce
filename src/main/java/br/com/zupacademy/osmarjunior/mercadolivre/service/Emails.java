@@ -25,7 +25,7 @@ public class Emails {
     public void novaCompra(@NotNull @Valid Compra compra) {
         sender.sendEmail("<html>...</htm>",
                 "Novo Pedido de Compra",
-                compra.getEmailComprador(),
+                "compras@mercadolivre.com.br",
                 compra.getEmailVendendor());
     }
 }
