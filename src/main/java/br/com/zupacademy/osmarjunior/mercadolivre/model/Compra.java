@@ -2,11 +2,14 @@ package br.com.zupacademy.osmarjunior.mercadolivre.model;
 
 import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.GatewayPagamento;
 import br.com.zupacademy.osmarjunior.mercadolivre.model.enums.StatusCompra;
+import com.zaxxer.hikari.util.ConcurrentBag;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -42,6 +45,9 @@ public class Compra {
     @Enumerated(EnumType.STRING)
     private StatusCompra statusCompra;
 
+    @OneToMany(mappedBy = "compra")
+    private Set<Transacao> transacoes = new HashSet<>();
+
     @Deprecated
     public Compra() {
     }
@@ -60,7 +66,7 @@ public class Compra {
 
     public String gerarLinkDePagamento() {
 
-        return this.gatewayPagamento.gerarLinkPagamento(this.codigoDaCompra);
+        return this.gatewayPagamento.gerarLinkPagamento(this);
     }
 
     @Override
@@ -76,5 +82,21 @@ public class Compra {
 
     public String getEmailVendendor() {
         return this.produto.getDono().getUsername();
+    }
+
+    public String getCodigoDaCompra() {
+        return this.codigoDaCompra;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getEmailComprador() {
+        return this.comprador.getUsername();
+    }
+
+    public void adicionarTransacao(Transacao transacao) {
+        this.transacoes.add(transacao);
     }
 }
